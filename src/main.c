@@ -25,29 +25,41 @@ int main () {
 	SearchAndSetResourceDir("resources");
 
 	// Body Initialization
-	struct Body b1;
+	Body b1;
 	b1.position.x = 300;
 	b1.position.y = 0;
-	b1.velocity.y = 6;
-	b1.mass = 7.3e13;
+	b1.velocity.y = 30;
+	b1.mass = 75e14;
 	b1.radius = 75;
-	struct Body b2;
+	Body b2;
 	b2.position.x = 0;
-	b2.position.y = 200;
-	b2.velocity.x = -12;
-	b2.mass = 4e13;
-	b2.radius = 50;
-	struct Body b3;
-	b3.position.x = 0;
+	b2.position.y = 300;
+	b2.velocity.x = -30;
+	b2.mass = 75e14;
+	b2.radius = 75;
+	Body b3;
+	b3.position.x = -300;
 	b3.position.y = 0;
-	b3.mass = 25e13;
-	b3.radius = 100;
+	b3.velocity.y = -30;
+	b3.mass = 75e14;
+	b3.radius = 75;
+	Body b4;
+	b4.position.x = 0;
+	b4.position.y = -300;
+	b4.velocity.x = 30;
+	b4.mass = 75e14;
+	b4.radius = 75;
 
 	struct Camera camera;
 	camera.position.x = -GetScreenWidth() / 2;
-	camera.position.y = - GetScreenHeight() / 2;
+	camera.position.y = -GetScreenHeight() / 2;
 
-	struct Body* bodies[] = {&b1, &b2, &b3};
+	Body* bodies[] = {&b1, &b2, &b3, &b4};
+
+	RenderTexture2D pathTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+	BeginTextureMode(pathTexture);
+	ClearBackground(WHITE);
+	EndTextureMode();
 	
 	// game loop
 	while (!WindowShouldClose()) {	// run the loop untill the user presses ESCAPE or presses the Close button on the window 
@@ -57,11 +69,17 @@ int main () {
 		int num = sizeof(bodies) / sizeof(bodies[0]);
 		update_bodies(bodies, num, GetFrameTime());
 
-
+		for (int i = 0; i < (num); i++) {
+			BeginTextureMode(pathTexture);
+			DrawCircle(bodies[i]->position.x - camera.position.x, (-bodies[i]->position.y - camera.position.y), 2.0f, RED);
+			EndTextureMode();
+		}
+		
 		// drawing
 		BeginDrawing();
 		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(WHITE);
+		DrawTexture(pathTexture.texture, 0, 0, WHITE);
 
 		
 		for (int i = 0; i < (num); i++) {
@@ -69,15 +87,15 @@ int main () {
 		}
 		DrawText(TextFormat("FPS: %d    deltaTime: %f", GetFPS(), GetFrameTime()), 0, 0, 13, RED);
 		
-		DrawText(TextFormat("B1 Data: Position: (%f, %f)    Velocity: (%f, %f)    Acceleration: (%f, %f)", b1.position.x, b1.position.y, b1.velocity.x, b1.position.y, b1.acceleration.x, b1.acceleration.y), 0, 15, 13, RED);
+		/*DrawText(TextFormat("B1 Data: Position: (%f, %f)    Velocity: (%f, %f)    Acceleration: (%f, %f)", b1.position.x, b1.position.y, b1.velocity.x, b1.position.y, b1.acceleration.x, b1.acceleration.y), 0, 15, 13, RED);
 		DrawText(TextFormat("B2 Data: Position: (%f, %f)    Velocity: (%f, %f)    Acceleration: (%f, %f)", b2.position.x, b2.position.y, b2.velocity.x, b2.position.y, b2.acceleration.x, b2.acceleration.y), 0, 30, 13, RED);
 		DrawText(TextFormat("B3 Data: Position: (%f, %f)    Velocity: (%f, %f)    Acceleration: (%f, %f)", b3.position.x, b3.position.y, b3.velocity.x, b3.position.y, b3.acceleration.x, b3.acceleration.y), 0, 45, 13, RED);
-		
+		*/
 		EndDrawing();
 	}
 
 	// cleanup
-
+	UnloadRenderTexture(pathTexture);
 	// destroy the window and cleanup the OpenGL context
 	CloseWindow();
 	return 0;

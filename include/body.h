@@ -2,15 +2,15 @@
 
 #include "raylib.h"
 
-struct Body {
+typedef struct  {
     Vector2 position;
     Vector2 velocity;
     Vector2 acceleration;
 
     float mass;
     float radius;
-};
+} Body;
 
-extern void update_body(struct Body* body, Vector2 newAcceleration, float deltaTime);
+extern void update_body(Body* body, Vector2 newAcceleration, float deltaTime);
 
-extern void update_bodies(struct Body* bodies[], int num, float deltaTime);
+extern void update_bodies(Body* bodies[], int num, float deltaTime);
